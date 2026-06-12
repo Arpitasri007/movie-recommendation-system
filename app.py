@@ -44,10 +44,7 @@ tfidf = TfidfVectorizer(
     stop_words="english"
 )
 
-vectors = tfidf.fit_transform(
-    movies["overview"]
-)
-
+vectors = tfidf.fit_transform(movies["overview"])
 similarity = cosine_similarity(vectors)
 
 # ---------------------------
