@@ -1,33 +1,42 @@
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
+# Load dataset
 movies = pd.read_csv("movies.csv")
 
-# Keep only needed columns
+# Keep only required columns
 movies = movies[
     [
-        'id',
-        'title',
-        'overview',
-        'original_language',
-        'genres',
-        'vote_average',
-        'release_date'
+        "id",
+        "title",
+        "overview",
+        "original_language",
+        "genres",
+        "vote_average",
+        "release_date",
     ]
 ]
 
-# Remove rows with missing overview
-movies.dropna(inplace=True)
+# Remove missing overviews
+movies.dropna(subset=["overview"], inplace=True)
 
-cv = TfidfVectorizer(max_features=5000, stop_words='english')
+# Create TF-IDF vectors
+tfidf = TfidfVectorizer(
+    max_features=5000,
+    stop_words="english"
+)
 
-vectors = cv.fit_transform(movies['overview']).toarray()
+vectors = tfidf.fit_transform(movies["overview"])
 
+# Create similarity matrix
 similarity = cosine_similarity(vectors)
 
-pickle.dump(movies, open('movies.pkl', 'wb'))
-pickle.dump(similarity, open('similarity.pkl', 'wb'))
+# Save only movies dataframe
+pickle.dump(movies, open("movies.pkl", "wb"))
+pickle.dump(similarity, open("similarity.pkl", "wb"))
 
-print("Model Created Successfully")
+print("Movies data prepared successfully!")
+print(f"Total movies: {len(movies)}")
+print(f"Similarity matrix shape: {similarity.shape}")

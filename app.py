@@ -1,23 +1,62 @@
 from flask import Flask, render_template, request
 import pickle
 import pandas as pd
+import pickle
+import os
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 
 # ---------------------------
+# PATHS
+# ---------------------------
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# ---------------------------
 # HOLLYWOOD DATA
 # ---------------------------
 
-movies = pickle.load(open("movies.pkl", "rb"))
-similarity = pickle.load(open("similarity.pkl", "rb"))
+movies = pd.read_csv("movies.csv")
+
+movies = movies[
+    [
+        "id",
+        "title",
+        "overview",
+        "original_language",
+        "genres",
+        "vote_average",
+        "release_date",
+    ]
+]
+
+movies.dropna(subset=["overview"], inplace=True)
+tfidf = TfidfVectorizer(
+    max_features=5000,
+    stop_words="english"
+)
+
+vectors = tfidf.fit_transform(
+    movies["overview"]
+)
+
+similarity = cosine_similarity(vectors)
 
 # ---------------------------
 # INDIAN DATA
 # ---------------------------
 
-indian_movies = pd.read_csv("indian movies.csv")
+indian_movies_path = os.path.join(
+    BASE_DIR,
+    "indian movies.csv"
+)
+
+indian_movies = pd.read_csv(indian_movies_path)
 
 indian_movies = indian_movies[
     ["Movie Name", "Genre", "Language", "Rating(10)"]
@@ -35,9 +74,11 @@ indian_movies["tags"] = (
 
 cv = CountVectorizer(stop_words="english")
 
-vectors = cv.fit_transform(indian_movies["tags"])
+vectors_indian = cv.fit_transform(
+    indian_movies["tags"]
+)
 
-indian_similarity = cosine_similarity(vectors)
+indian_similarity = cosine_similarity(vectors_indian)
 
 # ---------------------------
 # HOLLYWOOD RECOMMENDER
@@ -69,6 +110,7 @@ def recommend_hollywood(movie):
         return ["Movie not found"]
 
     movie_index = matches.index[0]
+
     distances = similarity[movie_index]
 
     movie_list = sorted(
@@ -121,7 +163,8 @@ def recommend_indian(movie, language):
     )
 
     recommendations = recommendations[
-        recommendations["Movie Name"] != selected_movie["Movie Name"]
+        recommendations["Movie Name"]
+        != selected_movie["Movie Name"]
     ]
 
     return recommendations["Movie Name"].head(5).tolist()
@@ -134,6 +177,7 @@ def recommend_indian(movie, language):
 def home():
 
     recommendations = []
+    movie = ""
 
     if request.method == "POST":
 
@@ -148,9 +192,7 @@ def home():
                 movie,
                 category
             )
-        print("Category:", category)
-        print("Movie:", movie)
-        print("Recommendations:", recommendations)
+
     return render_template(
     "index.html",
     recommendations=recommendations,
