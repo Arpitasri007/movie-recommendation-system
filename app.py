@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request
-import pickle
 import pandas as pd
-import pickle
 import os
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -17,6 +15,7 @@ app = Flask(__name__)
 # ---------------------------
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 # ---------------------------
 # HOLLYWOOD DATA
@@ -39,6 +38,7 @@ movies = movies[
 ]
 
 movies.dropna(subset=["overview"], inplace=True)
+
 tfidf = TfidfVectorizer(
     max_features=5000,
     stop_words="english"
