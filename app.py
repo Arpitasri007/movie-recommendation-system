@@ -9,6 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+
 app = Flask(__name__)
 
 # ---------------------------
@@ -21,7 +22,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # HOLLYWOOD DATA
 # ---------------------------
 
-movies = pd.read_csv("movies.csv")
+movies = pd.read_csv(
+    os.path.join(BASE_DIR, "movies.csv")
+)
 
 movies = movies[
     [
@@ -56,7 +59,9 @@ indian_movies_path = os.path.join(
     "indian movies.csv"
 )
 
-indian_movies = pd.read_csv(indian_movies_path)
+indian_movies = pd.read_csv(
+    os.path.join(BASE_DIR, "indian movies.csv")
+)
 
 indian_movies = indian_movies[
     ["Movie Name", "Genre", "Language", "Rating(10)"]
