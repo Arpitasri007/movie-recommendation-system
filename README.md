@@ -30,9 +30,28 @@ A web-based Movie Recommendation System built using Python and Flask that provid
 * movies.pkl – Hollywood movie dataset
 * similarity.pkl – Similarity matrix
 
+# Movie Recommendation System
+
 ## 🎥 Demo Video
 
-[Watch Demo Video](./screenshot/demo_video.mp4)
+📥 Download and watch the demo video:
+
+[Demo Video](./screenshot/demo_video.mp4)
+
+## 📸 Screenshots
+
+### Home Page
+![Home](./screenshot/home.png)
+
+### Search Functionality
+![Search](./screenshot/search.png)
+
+### Recommendations
+![Recommendations](./screenshot/recomendation.png)
+
+### Multi-language Support
+![Multilanguage](./screenshot/multilanguage.png)
+
 
 ## Future Enhancements
 
